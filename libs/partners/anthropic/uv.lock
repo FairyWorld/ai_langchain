@@ -423,7 +423,7 @@ wheels = [
 
 [[package]]
 name = "langchain-anthropic"
-version = "0.3.14"
+version = "0.3.16"
 source = { editable = "." }
 dependencies = [
     { name = "anthropic" },
@@ -463,6 +463,7 @@ test-integration = [
 typing = [
     { name = "langchain-core" },
     { name = "mypy" },
+    { name = "types-requests" },
 ]
 
 [package.metadata]
@@ -498,11 +499,12 @@ test-integration = [
 typing = [
     { name = "langchain-core", editable = "../../core" },
     { name = "mypy", specifier = ">=1.10,<2.0" },
+    { name = "types-requests", specifier = ">=2.31.0" },
 ]
 
 [[package]]
 name = "langchain-core"
-version = "0.3.63"
+version = "0.3.66"
 source = { editable = "../../core" }
 dependencies = [
     { name = "jsonpatch" },
@@ -517,7 +519,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "jsonpatch", specifier = ">=1.33,<2.0" },
-    { name = "langsmith", specifier = ">=0.1.126,<0.4" },
+    { name = "langsmith", specifier = ">=0.3.45" },
     { name = "packaging", specifier = ">=23.2,<25" },
     { name = "pydantic", specifier = ">=2.7.4" },
     { name = "pyyaml", specifier = ">=5.3" },
@@ -560,7 +562,7 @@ typing = [
 
 [[package]]
 name = "langchain-tests"
-version = "0.3.19"
+version = "0.3.20"
 source = { editable = "../../standard-tests" }
 dependencies = [
     { name = "httpx" },
@@ -605,7 +607,7 @@ typing = [
 
 [[package]]
 name = "langsmith"
-version = "0.3.37"
+version = "0.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -616,9 +618,9 @@ dependencies = [
     { name = "requests-toolbelt" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/d0/98daffe57c57c2f44c5d363df5004d8e530b8c9b15751f451d273fd1d4c8/langsmith-0.3.37.tar.gz", hash = "sha256:d49d9a12d24d3984d5b3e2b5915b525b4a29a4706ea9cadde43c980fba43fab0", size = 344645 }
+sdist = { url = "https://files.pythonhosted.org/packages/8a/b6/0ebc396baf6b69aeb9eb466bbeaccd504c901615e744b0ecf33b0d39a8a5/langsmith-0.4.2.tar.gz", hash = "sha256:51df086a9ae17ffa16538f52ef3bb8b3d85b0e52c84958980553cb6cadd9e565", size = 352208 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/50/f2/5700dbeec7dca0aa57a6ed2f472fa3a323b46c85ab2bc446b2c7c8fb599e/langsmith-0.3.37-py3-none-any.whl", hash = "sha256:bdecca4eb48ba1799e821a33dbdca318ab202faa71a5bfa7d2358be6c3fd7eeb", size = 359308 },
+    { url = "https://files.pythonhosted.org/packages/58/06/fdcc2e8de8934595e7fd7b3f7c93065ff25c03ddeda566823882379b66b2/langsmith-0.4.2-py3-none-any.whl", hash = "sha256:2b1a3f889e134546dc5d67e23e5e8c6be5f91fd86827276ac874e3a25a04498a", size = 367715 },
 ]
 
 [[package]]
@@ -1609,6 +1611,27 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/5b/b9/1ed31d167be802da0fc95020d04cd27b7d7065cc6fbefdd2f9186f60d7bd/tomli-2.2.1-cp313-cp313-win32.whl", hash = "sha256:d3f5614314d758649ab2ab3a62d4f2004c825922f9e370b29416484086b264ec", size = 98724 },
     { url = "https://files.pythonhosted.org/packages/c7/32/b0963458706accd9afcfeb867c0f9175a741bf7b19cd424230714d722198/tomli-2.2.1-cp313-cp313-win_amd64.whl", hash = "sha256:a38aa0308e754b0e3c67e344754dff64999ff9b513e691d0e786265c93583c69", size = 109383 },
     { url = "https://files.pythonhosted.org/packages/6e/c2/61d3e0f47e2b74ef40a68b9e6ad5984f6241a942f7cd3bbfbdbd03861ea9/tomli-2.2.1-py3-none-any.whl", hash = "sha256:cb55c73c5f4408779d0cf3eef9f762b9c9f147a77de7b258bef0a5628adc85cc", size = 14257 },
+]
+
+[[package]]
+name = "types-requests"
+version = "2.31.0.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "types-urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f9/b8/c1e8d39996b4929b918aba10dba5de07a8b3f4c8487bb61bb79882544e69/types-requests-2.31.0.6.tar.gz", hash = "sha256:cd74ce3b53c461f1228a9b783929ac73a666658f223e28ed29753771477b3bd0", size = 15535 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5c/a1/6f8dc74d9069e790d604ddae70cb46dcbac668f1bb08136e7b0f2f5cd3bf/types_requests-2.31.0.6-py3-none-any.whl", hash = "sha256:a2db9cb228a81da8348b49ad6db3f5519452dd20a9c1e1a868c83c5fe88fd1a9", size = 14516 },
+]
+
+[[package]]
+name = "types-urllib3"
+version = "1.26.25.14"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/73/de/b9d7a68ad39092368fb21dd6194b362b98a1daeea5dcfef5e1adb5031c7e/types-urllib3-1.26.25.14.tar.gz", hash = "sha256:229b7f577c951b8c1b92c1bc2b2fdb0b49847bd2af6d1cc2a2e3dd340f3bda8f", size = 11239 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/11/7b/3fc711b2efea5e85a7a0bbfe269ea944aa767bbba5ec52f9ee45d362ccf3/types_urllib3-1.26.25.14-py3-none-any.whl", hash = "sha256:9683bbb7fb72e32bfe9d2be6e04875fbe1b3eeec3cbb4ea231435aa7fd6b4f0e", size = 15377 },
 ]
 
 [[package]]
