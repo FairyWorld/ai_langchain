@@ -1505,7 +1505,7 @@ class Runnable(Generic[Input, Output], ABC):
 
         .. code-block:: python
 
-            from langchain_community.chat_models import ChatOllama
+            from langchain_ollama import ChatOllama
             from langchain_core.output_parsers import StrOutputParser
 
             llm = ChatOllama(model='llama2')
@@ -4331,8 +4331,9 @@ class RunnableLambda(Runnable[Input, Output]):
         self,
         func: Union[
             Union[
-                Callable[[Input], Output],
                 Callable[[Input], Iterator[Output]],
+                Callable[[Input], Runnable[Input, Output]],
+                Callable[[Input], Output],
                 Callable[[Input, RunnableConfig], Output],
                 Callable[[Input, CallbackManagerForChainRun], Output],
                 Callable[[Input, CallbackManagerForChainRun, RunnableConfig], Output],
