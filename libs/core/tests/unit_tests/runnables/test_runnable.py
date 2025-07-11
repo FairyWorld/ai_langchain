@@ -671,7 +671,7 @@ def test_with_types_with_type_generics() -> None:
 
 def test_schema_with_itemgetter() -> None:
     """Test runnable with itemgetter."""
-    foo = RunnableLambda(itemgetter("hello"))
+    foo: Runnable = RunnableLambda(itemgetter("hello"))
     assert _schema(foo.input_schema) == {
         "properties": {"hello": {"title": "Hello"}},
         "required": ["hello"],
@@ -2785,7 +2785,12 @@ Question:
                 response_metadata={},
             ),
             HumanMessage(
-                content="Context:\n[Document(metadata={}, page_content='foo'), Document(metadata={}, page_content='bar')]\n\nQuestion:\nWhat is your name?",
+                content="Context:\n"
+                "[Document(metadata={}, page_content='foo'), "
+                "Document(metadata={}, page_content='bar')]\n"
+                "\n"
+                "Question:\n"
+                "What is your name?",
                 additional_kwargs={},
                 response_metadata={},
             ),
@@ -3870,14 +3875,14 @@ def test_retrying(mocker: MockerFixture) -> None:
             raise RuntimeError(msg)
         return x
 
-    _lambda_mock = mocker.Mock(side_effect=_lambda)
-    runnable = RunnableLambda(_lambda_mock)
+    lambda_mock = mocker.Mock(side_effect=_lambda)
+    runnable = RunnableLambda(lambda_mock)
 
     with pytest.raises(ValueError, match="x is 1"):
         runnable.invoke(1)
 
-    assert _lambda_mock.call_count == 1
-    _lambda_mock.reset_mock()
+    assert lambda_mock.call_count == 1
+    lambda_mock.reset_mock()
 
     with pytest.raises(ValueError, match="x is 1"):
         runnable.with_retry(
@@ -3886,8 +3891,8 @@ def test_retrying(mocker: MockerFixture) -> None:
             exponential_jitter_params={"initial": 0.1},
         ).invoke(1)
 
-    assert _lambda_mock.call_count == 2  # retried
-    _lambda_mock.reset_mock()
+    assert lambda_mock.call_count == 2  # retried
+    lambda_mock.reset_mock()
 
     with pytest.raises(RuntimeError):
         runnable.with_retry(
@@ -3896,8 +3901,8 @@ def test_retrying(mocker: MockerFixture) -> None:
             retry_if_exception_type=(ValueError,),
         ).invoke(2)
 
-    assert _lambda_mock.call_count == 1  # did not retry
-    _lambda_mock.reset_mock()
+    assert lambda_mock.call_count == 1  # did not retry
+    lambda_mock.reset_mock()
 
     with pytest.raises(ValueError, match="x is 1"):
         runnable.with_retry(
@@ -3907,8 +3912,8 @@ def test_retrying(mocker: MockerFixture) -> None:
         ).batch([1, 2, 0])
 
     # 3rd input isn't retried because it succeeded
-    assert _lambda_mock.call_count == 3 + 2
-    _lambda_mock.reset_mock()
+    assert lambda_mock.call_count == 3 + 2
+    lambda_mock.reset_mock()
 
     output = runnable.with_retry(
         stop_after_attempt=2,
@@ -3917,12 +3922,12 @@ def test_retrying(mocker: MockerFixture) -> None:
     ).batch([1, 2, 0], return_exceptions=True)
 
     # 3rd input isn't retried because it succeeded
-    assert _lambda_mock.call_count == 3 + 2
+    assert lambda_mock.call_count == 3 + 2
     assert len(output) == 3
     assert isinstance(output[0], ValueError)
     assert isinstance(output[1], RuntimeError)
     assert output[2] == 0
-    _lambda_mock.reset_mock()
+    lambda_mock.reset_mock()
 
 
 async def test_async_retrying(mocker: MockerFixture) -> None:
@@ -3935,14 +3940,14 @@ async def test_async_retrying(mocker: MockerFixture) -> None:
             raise RuntimeError(msg)
         return x
 
-    _lambda_mock = mocker.Mock(side_effect=_lambda)
-    runnable = RunnableLambda(_lambda_mock)
+    lambda_mock = mocker.Mock(side_effect=_lambda)
+    runnable = RunnableLambda(lambda_mock)
 
     with pytest.raises(ValueError, match="x is 1"):
         await runnable.ainvoke(1)
 
-    assert _lambda_mock.call_count == 1
-    _lambda_mock.reset_mock()
+    assert lambda_mock.call_count == 1
+    lambda_mock.reset_mock()
 
     with pytest.raises(ValueError, match="x is 1"):
         await runnable.with_retry(
@@ -3951,8 +3956,8 @@ async def test_async_retrying(mocker: MockerFixture) -> None:
             retry_if_exception_type=(ValueError, KeyError),
         ).ainvoke(1)
 
-    assert _lambda_mock.call_count == 2  # retried
-    _lambda_mock.reset_mock()
+    assert lambda_mock.call_count == 2  # retried
+    lambda_mock.reset_mock()
 
     with pytest.raises(RuntimeError):
         await runnable.with_retry(
@@ -3961,8 +3966,8 @@ async def test_async_retrying(mocker: MockerFixture) -> None:
             retry_if_exception_type=(ValueError,),
         ).ainvoke(2)
 
-    assert _lambda_mock.call_count == 1  # did not retry
-    _lambda_mock.reset_mock()
+    assert lambda_mock.call_count == 1  # did not retry
+    lambda_mock.reset_mock()
 
     with pytest.raises(ValueError, match="x is 1"):
         await runnable.with_retry(
@@ -3972,8 +3977,8 @@ async def test_async_retrying(mocker: MockerFixture) -> None:
         ).abatch([1, 2, 0])
 
     # 3rd input isn't retried because it succeeded
-    assert _lambda_mock.call_count == 3 + 2
-    _lambda_mock.reset_mock()
+    assert lambda_mock.call_count == 3 + 2
+    lambda_mock.reset_mock()
 
     output = await runnable.with_retry(
         stop_after_attempt=2,
@@ -3982,12 +3987,12 @@ async def test_async_retrying(mocker: MockerFixture) -> None:
     ).abatch([1, 2, 0], return_exceptions=True)
 
     # 3rd input isn't retried because it succeeded
-    assert _lambda_mock.call_count == 3 + 2
+    assert lambda_mock.call_count == 3 + 2
     assert len(output) == 3
     assert isinstance(output[0], ValueError)
     assert isinstance(output[1], RuntimeError)
     assert output[2] == 0
-    _lambda_mock.reset_mock()
+    lambda_mock.reset_mock()
 
 
 def test_runnable_lambda_stream() -> None:
@@ -4001,7 +4006,7 @@ def test_runnable_lambda_stream() -> None:
     # sleep to better simulate a real stream
     llm = FakeStreamingListLLM(responses=[llm_res], sleep=0.01)
 
-    output = list(RunnableLambda(lambda _: llm).stream(""))
+    output = list(RunnableLambda[str, str](lambda _: llm).stream(""))
     assert output == list(llm_res)
 
 
@@ -4014,9 +4019,9 @@ def test_runnable_lambda_stream_with_callbacks() -> None:
     llm = FakeStreamingListLLM(responses=[llm_res], sleep=0.01)
     config: RunnableConfig = {"callbacks": [tracer]}
 
-    assert list(RunnableLambda(lambda _: llm).stream("", config=config)) == list(
-        llm_res
-    )
+    assert list(
+        RunnableLambda[str, str](lambda _: llm).stream("", config=config)
+    ) == list(llm_res)
 
     assert len(tracer.runs) == 1
     assert tracer.runs[0].error is None
@@ -4075,10 +4080,7 @@ async def test_runnable_lambda_astream() -> None:
     assert output == list(llm_res)
 
     output = [
-        chunk
-        async for chunk in cast(
-            "AsyncIterator[str]", RunnableLambda(lambda _: llm).astream("")
-        )
+        chunk async for chunk in RunnableLambda[str, str](lambda _: llm).astream("")
     ]
     assert output == list(llm_res)
 
@@ -4093,7 +4095,10 @@ async def test_runnable_lambda_astream_with_callbacks() -> None:
     config: RunnableConfig = {"callbacks": [tracer]}
 
     assert [
-        _ async for _ in RunnableLambda(lambda _: llm).astream("", config=config)
+        _
+        async for _ in RunnableLambda[str, str](lambda _: llm).astream(
+            "", config=config
+        )
     ] == list(llm_res)
 
     assert len(tracer.runs) == 1
@@ -4140,7 +4145,8 @@ def test_seq_batch_return_exceptions(mocker: MockerFixture) -> None:
                 if value.startswith(self.fail_starts_with):
                     outputs.append(
                         ValueError(
-                            f"ControlledExceptionRunnable({self.fail_starts_with}) fail for {value}"
+                            f"ControlledExceptionRunnable({self.fail_starts_with}) "
+                            f"fail for {value}"
                         )
                     )
                 else:
@@ -4280,7 +4286,8 @@ async def test_seq_abatch_return_exceptions(mocker: MockerFixture) -> None:
                 if value.startswith(self.fail_starts_with):
                     outputs.append(
                         ValueError(
-                            f"ControlledExceptionRunnable({self.fail_starts_with}) fail for {value}"
+                            f"ControlledExceptionRunnable({self.fail_starts_with}) "
+                            f"fail for {value}"
                         )
                     )
                 else:
@@ -4931,7 +4938,8 @@ def test_runnable_gen_context_config() -> None:
 
 @pytest.mark.skipif(
     sys.version_info < (3, 11),
-    reason="Python 3.10 and below don't support running async tasks in a specific context",
+    reason="Python 3.10 and below don't support running "
+    "async tasks in a specific context",
 )
 async def test_runnable_gen_context_config_async() -> None:
     """Test that a generator can call other runnables with config
@@ -5057,7 +5065,8 @@ def test_runnable_iter_context_config() -> None:
 
 @pytest.mark.skipif(
     sys.version_info < (3, 11),
-    reason="Python 3.10 and below don't support running async tasks in a specific context",
+    reason="Python 3.10 and below don't support running "
+    "async tasks in a specific context",
 )
 async def test_runnable_iter_context_config_async() -> None:
     """Test that a generator can call other runnables with config
@@ -5179,7 +5188,8 @@ def test_runnable_lambda_context_config() -> None:
 
 @pytest.mark.skipif(
     sys.version_info < (3, 11),
-    reason="Python 3.10 and below don't support running async tasks in a specific context",
+    reason="Python 3.10 and below don't support running "
+    "async tasks in a specific context",
 )
 async def test_runnable_lambda_context_config_async() -> None:
     """Test that a function can call other runnables with config
@@ -5300,7 +5310,7 @@ async def test_ainvoke_on_returned_runnable() -> None:
     def func(_input: dict, /) -> Runnable:
         return idchain
 
-    assert await RunnableLambda(func).ainvoke({})
+    assert await RunnableLambda[dict, bool](func).ainvoke({})
 
 
 def test_invoke_stream_passthrough_assign_trace() -> None:
@@ -5363,7 +5373,7 @@ async def test_astream_log_deep_copies() -> None:
         """Get run log."""
         run_log = RunLog(state=None)  # type: ignore[arg-type]
         for log_patch in run_log_patches:
-            run_log = run_log + log_patch
+            run_log += log_patch
         return run_log
 
     def add_one(x: int) -> int:
